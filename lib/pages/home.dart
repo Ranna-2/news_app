@@ -8,6 +8,7 @@ import 'package:news_app/model/slider_model.dart';
 import 'package:news_app/pages/all_news.dart';
 import 'package:news_app/pages/article_view.dart';
 import 'package:news_app/pages/category_news.dart';
+import 'package:news_app/pages/login.dart';
 import 'package:news_app/services/data.dart';
 import 'package:news_app/services/news.dart';
 import 'package:news_app/services/news_controller.dart';
@@ -86,6 +87,43 @@ class _HomeState extends State<Home> {
         ),
         centerTitle: true,
         elevation: 0.0,
+        leading: IconButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Confirmation'),
+                  content:
+                      Text('This would log you out of the app, are you sure?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: Text('Yes'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        // If user clicks 'No', just close the dialog
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('No'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -249,38 +287,55 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildImage(String image, int index, String name) => Container(
-      margin: EdgeInsets.symmetric(horizontal: 5.0),
-      child: Stack(children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: CachedNetworkImage(
-            height: 250,
-            fit: BoxFit.cover,
-            width: MediaQuery.of(context).size.width,
-            imageUrl: image,
-          ),
+  Widget buildImage(String image, int index, String name) => GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ArticleView(blogUrl: sliders[index].url),
+            ),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          child: Stack(children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: CachedNetworkImage(
+                height: 250,
+                fit: BoxFit.cover,
+                width: MediaQuery.of(context).size.width,
+                imageUrl: image,
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(),
+                ),
+                errorWidget: (context, url, error) => Center(
+                  child: Icon(Icons.error),
+                ),
+              ),
+            ),
+            Container(
+              height: 250,
+              padding: EdgeInsets.only(left: 10.0),
+              margin: EdgeInsets.only(top: 130.0),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10))),
+              child: Text(
+                name,
+                maxLines: 2,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
+              ),
+            )
+          ]),
         ),
-        Container(
-          height: 250,
-          padding: EdgeInsets.only(left: 10.0),
-          margin: EdgeInsets.only(top: 130.0),
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-              color: Colors.black26,
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10))),
-          child: Text(
-            name,
-            maxLines: 2,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold),
-          ),
-        )
-      ]));
+      );
 
   Widget buildIndicator() => AnimatedSmoothIndicator(
         activeIndex: activeIndex,
