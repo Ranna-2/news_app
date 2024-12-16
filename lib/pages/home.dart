@@ -7,6 +7,7 @@ import 'package:news_app/model/category_model.dart';
 import 'package:news_app/model/slider_model.dart';
 import 'package:news_app/pages/all_news.dart';
 import 'package:news_app/pages/article_view.dart';
+import 'package:news_app/pages/breaking_news_page.dart';
 import 'package:news_app/pages/category_news.dart';
 import 'package:news_app/pages/login.dart';
 import 'package:news_app/services/data.dart';
@@ -187,7 +188,8 @@ class _HomeState extends State<Home> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          AllNews(news: "Breaking ")));
+                                          BreakingNewsPage()
+                                  ),);
                             },
                             child: Text(
                               "View All",
